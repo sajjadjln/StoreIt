@@ -7,6 +7,7 @@ use App\Http\Requests\SignupRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -37,21 +38,15 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $requestData = $request->validated();
+        $credentials = $request->validated();
 
-        $user = User::where('email', '=', $requestData['email'])->first();
-
-        if ($user == null) {
+        if (!Auth::attempt($credentials)) {
             return response()->json([
-                'message' => "invalid email or password"
+                'message' => 'invalid email or password'
             ], 401);
         }
+        $user = Auth::user();
 
-        if (!Hash::check($requestData['password'], $user['password'])) {
-            return response()->json([
-                "message" => "password is incorect"
-            ]);
-        }
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return (new UserResource($user))
