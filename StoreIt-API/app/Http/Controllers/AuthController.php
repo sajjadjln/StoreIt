@@ -23,9 +23,11 @@ class AuthController extends Controller
             'used_bytes' => 0,
             'quota_bytes' => $validatedData['quota_bytes'] ?? 1073741824,
         ]);
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return (new UserResource($user))
             ->additional([
+                'token' => $token,
                 'success' => true,
                 'message' => 'User registered successfully',
             ])
@@ -50,8 +52,11 @@ class AuthController extends Controller
                 "message" => "password is incorect"
             ]);
         }
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return (new UserResource($user))
             ->additional([
+                'token' => $token,
                 "success" => true,
                 "message" => "login completed successfully"
             ])
