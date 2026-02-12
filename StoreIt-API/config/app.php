@@ -123,4 +123,9 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'storage' => [
+        'default_quota' => env('DEFAULT_STORAGE_QUOTA', 1073741824),
+        'max_quota' => env('MAX_STORAGE_QUOTA', 107374182400),
+        'min_quota' => env('MIN_STORAGE_QUOTA', 1048576),
+    ],
 ];

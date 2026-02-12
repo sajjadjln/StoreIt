@@ -15,7 +15,7 @@ class AuthService implements AuthContract
             'email' => $validatedData['email'],
             'password' => $validatedData['password'],
             'used_bytes' => 0,
-            'quota_bytes' => $validatedData['quota_bytes'] ?? 1073741824,
+            'quota_bytes' => $validatedData['quota_bytes'] ?? config('app.storage.min_quota'),
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
