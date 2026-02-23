@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\LoginCredentials;
+use App\DTOs\SignupCredentials;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
 use App\Contracts\AuthContract;
@@ -21,7 +23,13 @@ class AuthController extends Controller
 
         $validatedData = $request->validated();
 
-        $result = $this->authService->signup($validatedData);
+        $credentials = new SignupCredentials(
+            $validatedData['username'],
+            $validatedData['email'],
+            $validatedData['password'],
+        );
+
+        $result = $this->authService->signup($credentials);
 
         return (new UserResource($result->user))
             ->additional([
@@ -36,7 +44,13 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         try {
-            $credentials = $request->validated();
+            $validatedData = $request->validated();
+
+            $credentials = new LoginCredentials(
+                $validatedData['email'],
+                $validatedData['password'],
+            );
+
             $result = $this->authService->login($credentials);
 
             return (new UserResource($result->user))
