@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\TokenManagerContract;
 use App\DTOs\AuthResponse;
 use App\DTOs\LoginCredentials;
 use App\DTOs\SignupCredentials;
@@ -12,6 +13,10 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthService implements AuthContract
 {
+    public function __construct(
+        protected readonly TokenManagerContract $tokenManager
+    ) {
+    }
     public function signup(SignupCredentials $validatedData): AuthResponse
     {
         $user = User::create([
@@ -39,7 +44,7 @@ class AuthService implements AuthContract
         }
 
         $user = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $this->tokenManager->generate($user);
 
         return new AuthResponse($user, $token);
     }
