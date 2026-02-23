@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Contracts\AuthContract;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class AuthService implements AuthContract
@@ -29,16 +30,13 @@ class AuthService implements AuthContract
     public function login(array $credentials): array
     {
         if (!Auth::attempt($credentials)) {
-            return [
-                'success' => false,
-            ];
+            throw new Exception('invalid email or password');
         }
 
         $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
-            'success' => true,
             'user' => $user,
             'token' => $token
         ];
