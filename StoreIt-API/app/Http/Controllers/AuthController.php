@@ -7,7 +7,6 @@ use App\DTOs\SignupCredentials;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
 use App\Contracts\AuthContract;
-use App\Http\Resources\UserResource;
 use Exception;
 
 class AuthController extends Controller
@@ -31,14 +30,7 @@ class AuthController extends Controller
 
         $result = $this->authService->signup($credentials);
 
-        return (new UserResource($result->user))
-            ->additional([
-                'token' => $result->token,
-                'success' => true,
-                'message' => 'User registered successfully',
-            ])
-            ->response()
-            ->setStatusCode(201);
+        return $result->toJsonResponse('User registered successfully', 201);
     }
 
     public function login(LoginRequest $request)
@@ -53,14 +45,7 @@ class AuthController extends Controller
 
             $result = $this->authService->login($credentials);
 
-            return (new UserResource($result->user))
-                ->additional([
-                    'token' => $result->token,
-                    "success" => true,
-                    "message" => "login completed successfully"
-                ])
-                ->response()
-                ->setStatusCode(200);
+            return $result->toJsonResponse('Login completed successfully');
 
         } catch (Exception $e) {
             return response()->json([
