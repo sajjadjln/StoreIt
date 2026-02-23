@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Contracts;
+
+use App\DTOs\AuthResponse;
 interface AuthContract
 {
-    public function signup(array $validatedData): array;
-    public function login(array $credentials): array;
+    public function signup(array $validatedData): AuthResponse;
+    public function login(array $credentials): AuthResponse;
 }

@@ -21,11 +21,11 @@ class AuthController extends Controller
 
         $validatedData = $request->validated();
 
-        $user = $this->authService->signup($validatedData);
+        $result = $this->authService->signup($validatedData);
 
-        return (new UserResource($user['user']))
+        return (new UserResource($result->user))
             ->additional([
-                'token' => $user['token'],
+                'token' => $result->token,
                 'success' => true,
                 'message' => 'User registered successfully',
             ])
@@ -37,11 +37,11 @@ class AuthController extends Controller
     {
         try {
             $credentials = $request->validated();
-            $user = $this->authService->login($credentials);
+            $result = $this->authService->login($credentials);
 
-            return (new UserResource($user['user']))
+            return (new UserResource($result->user))
                 ->additional([
-                    'token' => $user['token'],
+                    'token' => $result->token,
                     "success" => true,
                     "message" => "login completed successfully"
                 ])

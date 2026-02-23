@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\AuthResponse;
 use App\Models\User;
 use App\Contracts\AuthContract;
 use Exception;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthService implements AuthContract
 {
-    public function signup(array $validatedData): array
+    public function signup(array $validatedData): AuthResponse
     {
         $user = User::create([
             'username' => $validatedData['username'],
@@ -21,13 +22,10 @@ class AuthService implements AuthContract
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return [
-            'token' => $token,
-            'user' => $user
-        ];
+        return new AuthResponse($user, $token);
     }
 
-    public function login(array $credentials): array
+    public function login(array $credentials): AuthResponse
     {
         if (!Auth::attempt($credentials)) {
             throw new Exception('invalid email or password');
@@ -36,9 +34,6 @@ class AuthService implements AuthContract
         $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return [
-            'user' => $user,
-            'token' => $token
-        ];
+        return new AuthResponse($user, $token);
     }
 }
