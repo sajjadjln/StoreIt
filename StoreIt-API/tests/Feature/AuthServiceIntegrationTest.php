@@ -4,24 +4,16 @@ namespace Tests\Feature;
 
 use App\DTOs\SignupCredentials;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Mockery;
 use Tests\TestCase;
-use App\Contracts\TokenManagerContract;
-use App\Services\AuthService;
-
+use Tests\Traits\MocksAuthService;
 class AuthServiceIntegrationTest extends TestCase
 {
-    use RefreshDatabase;
-
-    private $tokenManagerMock;
-    private $authService;
+    use RefreshDatabase, MocksAuthService;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tokenManagerMock = Mockery::mock(TokenManagerContract::class);
-        $this->authService = new AuthService($this->tokenManagerMock);
+        $this->setupAuthService();
     }
 
     public function test_signup_stores_user_in_database_with_correct_data()

@@ -12,19 +12,14 @@ use Illuminate\Support\Facades\Auth;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use App\Models\User;
+use Tests\Traits\MocksAuthService;
 class AuthServiceTest extends TestCase
 {
-    private $tokenManagerMock;
-    private $authService;
-
+    use MocksAuthService;
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->tokenManagerMock = Mockery::mock(TokenManagerContract::class);
-
-        $this->authService = new AuthService($this->tokenManagerMock);
-
+        $this->setupAuthService();
     }
 
     public function test_login_throws_exception_on_invalid_credentials()
@@ -45,9 +40,9 @@ class AuthServiceTest extends TestCase
     public function test_login_returns_auth_response_on_success()
     {
         $credentials = new LoginCredentials('test@example.com', 'correctpassword');
-        $fakeUser = new User();
-        $fakeUser->id = 1;
-        $fakeUser->email = 'test@example.com';
+        $fakeUser = Mockery::mock(User::class);
+        $fakeUser->shouldReceive('getAttribute')->with('id')->andReturn(1);
+        $fakeUser->shouldReceive('getAttribute')->with('email')->andReturn('test@example.com');
 
 
         Auth::shouldReceive('attempt')->once()->andReturn(true);

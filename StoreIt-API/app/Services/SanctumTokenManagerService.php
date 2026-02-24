@@ -10,6 +10,12 @@ class SanctumTokenManagerService implements TokenManagerContract
 {
     public function generate(User $user): string
     {
-        return $user->createToken('auth_token')->plainTextToken;
+        return $user->createToken(TokenName::API->value)->plainTextToken;
     }
+}
+
+enum TokenName: string
+{
+    case API = 'api_token';
+    case WEB = 'web_token';
 }

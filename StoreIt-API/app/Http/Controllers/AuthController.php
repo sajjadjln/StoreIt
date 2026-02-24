@@ -7,12 +7,14 @@ use App\DTOs\SignupCredentials;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
 use App\Contracts\AuthContract;
+use App\Responses\AuthResponseBuilder;
 use Exception;
 
 class AuthController extends Controller
 {
     public function __construct(
-        protected readonly AuthContract $authService
+        protected readonly AuthContract $authService,
+        protected AuthResponseBuilder $responseBuilder
     ) {
     }
 
@@ -29,8 +31,11 @@ class AuthController extends Controller
         );
 
         $result = $this->authService->signup($credentials);
-
-        return $result->toJsonResponse('User registered successfully', 201);
+        return $this->responseBuilder->success(
+            $result,
+            'User registered successfully',
+            201
+        );
     }
 
     public function login(LoginRequest $request)
@@ -45,7 +50,11 @@ class AuthController extends Controller
 
             $result = $this->authService->login($credentials);
 
-            return $result->toJsonResponse('Login completed successfully');
+            return $this->responseBuilder->success(
+                $result,
+                'Login completed successfully',
+                200
+            );
 
         } catch (Exception $e) {
             return response()->json([

@@ -6,9 +6,9 @@ use App\Contracts\TokenManagerContract;
 use App\DTOs\AuthResponse;
 use App\DTOs\LoginCredentials;
 use App\DTOs\SignupCredentials;
+use App\Exception\InvalidCredentialsException;
 use App\Models\User;
 use App\Contracts\AuthContract;
-use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class AuthService implements AuthContract
@@ -40,7 +40,7 @@ class AuthService implements AuthContract
                 'password' => $credentials->password
             ])
         ) {
-            throw new Exception('invalid email or password');
+            throw new InvalidCredentialsException('invalid email or password');
         }
 
         $user = Auth::user();
