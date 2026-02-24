@@ -27,7 +27,7 @@ class AuthService implements AuthContract
             'quota_bytes' => $validatedData->quota_bytes ?? config('app.storage.min_quota'),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $this->tokenManager->generate($user);
 
         return new AuthResponse($user, $token);
     }

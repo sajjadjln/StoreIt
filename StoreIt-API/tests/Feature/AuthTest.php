@@ -12,22 +12,12 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    private function createUser($overrides = [])
-    {
-        $defaults = [
-            'username' => 'testuser',
-            'email' => 'test@example.com',
-            'password' => Hash::make('password123')
-        ];
-
-        return User::factory()->create(array_merge($defaults, $overrides));
-    }
     public function test_user_can_register(): void
     {
         $data = [
-            "username" => "sajjaddsdd",
-            "email" => "sajjadjldm1sd999@gmail.com",
-            "password" => "sajjadjlsnd"
+            "username" => $this->faker->userName(),
+            "email" => $this->faker->email(),
+            "password" => $this->faker->password()
         ];
 
         $response = $this->post('api/auth/signup', $data);
@@ -50,11 +40,11 @@ class AuthTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('users', [
-            "username" => "sajjaddsdd",
-            "email" => "sajjadjldm1sd999@gmail.com",
+            "username" => $data['username'],
+            "email" => $data['email'],
         ]);
-        $user = User::where('email', 'sajjadjldm1sd999@gmail.com')->first();
-        $this->assertTrue(Hash::check('sajjadjlsnd', $user->password));
+        $user = User::where('email', $data['email'])->first();
+        $this->assertTrue(Hash::check($data['password'], $user->password));
     }
 
     public function test_registration_requires_all_fields()
@@ -83,9 +73,9 @@ class AuthTest extends TestCase
 
         foreach ($invalidEmails as $invalidEmail) {
             $response = $this->postJson('api/auth/signup', [
-                "username" => "sajjaddsdd",
+                "username" => $this->faker->userName(),
                 "email" => $invalidEmail,
-                "password" => "sajjadjlsnd"
+                "password" => $this->faker->password()
             ]);
 
             $response->assertStatus(422);
@@ -97,9 +87,9 @@ class AuthTest extends TestCase
     public function test_registeration_requires_unique_user()
     {
         $data = [
-            "username" => "sajjaddsdd",
+            "username" => $this->faker->userName(),
             "email" => $this->faker->unique()->email(),
-            "password" => "sajjadjlsnd"
+            "password" => $this->faker->password()
         ];
 
 
@@ -118,13 +108,13 @@ class AuthTest extends TestCase
         $data1 = [
             "username" => "sameuser",
             "email" => $this->faker->unique()->email(),
-            "password" => "sajjadjlsnd"
+            "password" => $this->faker->password()
         ];
 
         $data2 = [
             "username" => "sameuser",
             "email" => $this->faker->unique()->email(),
-            "password" => "password456"
+            "password" => $this->faker->password()
         ];
 
         $this->postJson('/api/auth/signup', $data1)
@@ -152,12 +142,13 @@ class AuthTest extends TestCase
     public function test_user_can_login()
     {
 
-        $this->createUser();
+        $data = [
+            'email' => $this->faker->email(),
+            'password' => $this->faker->password()
+        ];
+        User::factory()->create($data);
 
-        $response = $this->postJson('/api/auth/login', [
-            'email' => 'test@example.com',
-            'password' => 'password123'
-        ]);
+        $response = $this->postJson('/api/auth/login', $data);
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'success',
