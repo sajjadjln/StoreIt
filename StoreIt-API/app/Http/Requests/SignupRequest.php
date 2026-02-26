@@ -23,7 +23,7 @@ class SignupRequest extends FormRequest
     {
         return [
             'username' => 'required|string|min:3|max:20|unique:users',
-            'email' => 'required|email:rfc,dns|unique:users',
+            'email' => 'required|email:rfc|unique:users',
             'password' => 'required|min:8',
             'quota_bytes' => 'nullable|integer|min:1048576',
         ];

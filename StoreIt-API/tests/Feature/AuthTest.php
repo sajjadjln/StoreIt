@@ -17,7 +17,7 @@ class AuthTest extends TestCase
         $data = [
             "username" => $this->faker->userName(),
             "email" => $this->faker->email(),
-            "password" => $this->faker->password()
+            "password" => $this->faker->password(8,20)
         ];
 
         $response = $this->post('api/auth/signup', $data);
@@ -75,7 +75,7 @@ class AuthTest extends TestCase
             $response = $this->postJson('api/auth/signup', [
                 "username" => $this->faker->userName(),
                 "email" => $invalidEmail,
-                "password" => $this->faker->password()
+                "password" => $this->faker->password(8,20)
             ]);
 
             $response->assertStatus(422);
@@ -89,7 +89,7 @@ class AuthTest extends TestCase
         $data = [
             "username" => $this->faker->userName(),
             "email" => $this->faker->unique()->email(),
-            "password" => $this->faker->password()
+            "password" => $this->faker->password(8,20)
         ];
 
 
@@ -108,13 +108,13 @@ class AuthTest extends TestCase
         $data1 = [
             "username" => "sameuser",
             "email" => $this->faker->unique()->email(),
-            "password" => $this->faker->password()
+            "password" => $this->faker->password(8,20)
         ];
 
         $data2 = [
             "username" => "sameuser",
             "email" => $this->faker->unique()->email(),
-            "password" => $this->faker->password()
+            "password" => $this->faker->password(8,20)
         ];
 
         $this->postJson('/api/auth/signup', $data1)
@@ -144,7 +144,7 @@ class AuthTest extends TestCase
 
         $data = [
             'email' => $this->faker->email(),
-            'password' => $this->faker->password()
+            'password' => $this->faker->password(8,20)
         ];
         User::factory()->create($data);
 
